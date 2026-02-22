@@ -143,6 +143,25 @@ add_ssh_key() {
     log_success "SSH ключ настроен для $username"
 }
 
+# Установить пароль для пользователя
+set_user_password() {
+    local username="$1"
+    local password="$2"
+    
+    log_info "Установка пароля для пользователя $username"
+    
+    # Устанавливаем пароль через chpasswd
+    echo "$username:$password" | chpasswd
+    
+    if [[ $? -eq 0 ]]; then
+        log_success "Пароль установлен для $username"
+        return 0
+    else
+        log_error "Не удалось установить пароль для $username"
+        return 1
+    fi
+}
+
 # =============================================================================
 # Комплексная настройка пользователя
 # =============================================================================
@@ -152,6 +171,7 @@ setup_user() {
     local username="$1"
     local ssh_key="${2:-}"
     local add_sudo="${3:-true}"
+    local password="${4:-}"
     
     log_header "Настройка пользователя: $username"
     
@@ -172,6 +192,11 @@ setup_user() {
     # Добавляем ключ если указан
     if [[ -n "$ssh_key" ]]; then
         add_ssh_key "$username" "$ssh_key"
+    fi
+    
+    # Устанавливаем пароль если указан
+    if [[ -n "$password" ]]; then
+        set_user_password "$username" "$password"
     fi
     
     log_success "Пользователь $username полностью настроен"
