@@ -101,7 +101,7 @@ ask_yes_no() {
     local question="$1"
     local default="${2:-n}"  # y или n
     local response
-    
+
     while true; do
         local default_prompt
         if [[ "$default" == "y" ]]; then
@@ -109,15 +109,15 @@ ask_yes_no() {
         else
             default_prompt="[y/N]"
         fi
-        
-        echo -ne "${CYAN}$question $default_prompt: ${NC}"
+
+        echo -ne "${CYAN}$question $default_prompt: ${NC}" >&2
         read -r response
-        
+
         # Если пустой ввод, используем default
         if [[ -z "$response" ]]; then
             response="$default"
         fi
-        
+
         case "$response" in
             [Yy]|[Yy][Ee][Ss])
                 return 0
@@ -126,7 +126,7 @@ ask_yes_no() {
                 return 1
                 ;;
             *)
-                echo -e "${YELLOW}Пожалуйста, введите 'y' или 'n'${NC}"
+                echo -e "${YELLOW}Пожалуйста, введите 'y' или 'n'${NC}" >&2
                 ;;
         esac
     done
@@ -169,7 +169,7 @@ ask_number() {
     local min="${3:-1}"
     local max="${4:-65535}"
     local response
-    
+
     while true; do
         local prompt
         if [[ -n "$default" ]]; then
@@ -177,10 +177,10 @@ ask_number() {
         else
             prompt="${question} (диапазон: $min-$max): "
         fi
-        
-        echo -ne "${CYAN}$prompt${NC}"
+
+        echo -ne "${CYAN}$prompt${NC}" >&2
         read -r response
-        
+
         # Если пустой ввод и есть default
         if [[ -z "$response" ]]; then
             if [[ -n "$default" ]]; then
@@ -192,22 +192,22 @@ ask_number() {
                     return 0
                 fi
             fi
-            echo -e "${YELLOW}Введите число от $min до $max${NC}"
+            echo -e "${YELLOW}Введите число от $min до $max${NC}" >&2
             continue
         fi
-        
+
         # Проверяем что ввод число
         if ! [[ "$response" =~ ^[0-9]+$ ]]; then
-            echo -e "${YELLOW}Пожалуйста, введите число${NC}"
+            echo -e "${YELLOW}Пожалуйста, введите число${NC}" >&2
             continue
         fi
-        
+
         # Проверяем диапазон
         if [[ "$response" -lt "$min" ]] || [[ "$response" -gt "$max" ]]; then
-            echo -e "${YELLOW}Число должно быть от $min до $max${NC}"
+            echo -e "${YELLOW}Число должно быть от $min до $max${NC}" >&2
             continue
         fi
-        
+
         echo "$response"
         return 0
     done
@@ -217,13 +217,13 @@ ask_number() {
 ask_ssh_key() {
     local question="$1"
     local response
-    
-    echo -e "${CYAN}$question${NC}"
-    echo -e "${YELLOW}Вставьте содержимое публичного ключа (например, ~/.ssh/id_ed25519.pub)${NC}"
-    echo -e "${YELLOW}Для пропуска введите пустую строку и нажмите Enter${NC}"
-    echo -ne "${CYAN}SSH ключ: ${NC}"
+
+    echo -e "${CYAN}$question${NC}" >&2
+    echo -e "${YELLOW}Вставьте содержимое публичного ключа (например, ~/.ssh/id_ed25519.pub)${NC}" >&2
+    echo -e "${YELLOW}Для пропуска введите пустую строку и нажмите Enter${NC}" >&2
+    echo -ne "${CYAN}SSH ключ: ${NC}" >&2
     read -r response
-    
+
     # Проверяем формат ключа (должен начинаться с ssh- или ecdsa-)
     if [[ -z "$response" ]]; then
         echo ""
@@ -232,7 +232,7 @@ ask_ssh_key() {
         echo "$response"
         return 0
     else
-        echo -e "${YELLOW}Неверный формат ключа. Ожидается формат OpenSSH${NC}"
+        echo -e "${YELLOW}Неверный формат ключа. Ожидается формат OpenSSH${NC}" >&2
         ask_ssh_key "$question"
     fi
 }
