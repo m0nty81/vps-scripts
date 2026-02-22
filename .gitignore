@@ -1,0 +1,33 @@
+# Игнорируемые файлы
+
+# Логи
+logs/
+*.log
+
+# Временные файлы
+*.tmp
+*.temp
+*.swp
+*.swo
+
+# Редакторы
+.vscode/
+.idea/
+*.code-workspace
+
+# Операционная система
+.DS_Store
+Thumbs.db
+
+# Backup файлы
+*.bak
+*.backup
+
+# Environment файлы (содержат секреты)
+.env
+.env.local
+.env.*.local
+
+# Исполняемые файлы (если есть компилированные)
+*.exe
+*.bin
