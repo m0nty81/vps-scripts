@@ -21,6 +21,12 @@ backup_ssh_config() {
         SSHD_CONFIG_BACKUP=$(backup_file "$SSHD_CONFIG")
         log_success "Создан backup SSH конфига: $SSHD_CONFIG_BACKUP"
     fi
+    
+    # Для Ubuntu 24.04: отключаем socket activation чтобы порт применился
+    if systemctl list-unit-files 2>/dev/null | grep -q "^ssh.socket"; then
+        log_info "Отключение socket activation для Ubuntu 24.04..."
+        systemctl disable --now ssh.socket 2>/dev/null || true
+    fi
 }
 
 # Изменить параметр в конфиге SSH
@@ -101,24 +107,30 @@ configure_ssh() {
 # Перезапустить SSH службу
 restart_ssh() {
     log_header "Перезапуск SSH службы"
-    
+
     log_warning "Внимание: после перезапуска SSH убедитесь что:"
     log_warning "  - Открыт новый порт SSH в firewall"
     log_warning "  - У вас есть доступ по SSH ключу"
     log_warning "  - Не закрывайте текущую сессию пока не проверите подключение"
-    
+
     # Проверяем какая служба используется
     local ssh_service="ssh"
-    
+
     # На некоторых системах служба называется sshd
     if ! systemctl list-unit-files | grep -q "^ssh.service"; then
         if systemctl list-unit-files | grep -q "^sshd.service"; then
             ssh_service="sshd"
         fi
     fi
-    
+
+    # Для Ubuntu 24.04: отключаем socket activation чтобы порт применился
+    if systemctl list-unit-files | grep -q "^ssh.socket"; then
+        log_info "Отключение socket activation для Ubuntu 24.04..."
+        systemctl disable --now ssh.socket 2>/dev/null || true
+    fi
+
     log_info "Перезапуск службы: $ssh_service"
-    
+
     # Тестовая проверка конфигурации перед перезапуском
     if command -v sshd >/dev/null 2>&1; then
         if ! sshd -t 2>/dev/null; then
@@ -126,9 +138,9 @@ restart_ssh() {
             return 1
         fi
     fi
-    
+
     restart_service "$ssh_service"
-    
+
     log_success "SSH служба перезапущена"
     log_info "Новый порт SSH: $(grep -E "^Port" "$SSHD_CONFIG" | head -1 | awk '{print $2}')"
 }

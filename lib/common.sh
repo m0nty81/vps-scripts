@@ -60,6 +60,15 @@ log_error() {
     log_to_file "ERROR: $msg"
 }
 
+log_debug() {
+    local msg="$1"
+    # Debug логирование только если включено (можно добавить переменную DEBUG)
+    if [[ "${DEBUG:-false}" == "true" ]]; then
+        echo -e "${CYAN}[DEBUG]${NC} $msg"
+        log_to_file "DEBUG: $msg"
+    fi
+}
+
 log_header() {
     local msg="$1"
     echo ""
@@ -256,8 +265,7 @@ backup_file() {
     if [[ -f "$file" ]]; then
         local backup="${file}.backup.$(date '+%Y%m%d_%H%M%S')"
         cp "$file" "$backup"
-        log_info "Создан backup: $backup"
-        echo "$backup"
+        echo "$backup"  # Возвращаем только путь (логирование делает вызывающая функция)
     fi
 }
 

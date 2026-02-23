@@ -1,4 +1,4 @@
-.PHONY: help test clean
+.PHONY: help test clean deploy
 
 help:
 	@echo "Доступные команды:"

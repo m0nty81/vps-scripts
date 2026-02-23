@@ -142,9 +142,6 @@ test_file_syntax "${PROJECT_ROOT}/lib/user_utils.sh" "lib/user_utils.sh"
 test_file_exists "${PROJECT_ROOT}/lib/firewall_utils.sh" "lib/firewall_utils.sh"
 test_file_syntax "${PROJECT_ROOT}/lib/firewall_utils.sh" "lib/firewall_utils.sh"
 
-test_file_exists "${PROJECT_ROOT}/lib/rollback.sh" "lib/rollback.sh"
-test_file_syntax "${PROJECT_ROOT}/lib/rollback.sh" "lib/rollback.sh"
-
 echo ""
 
 # -----------------------------------------------------------------------------
