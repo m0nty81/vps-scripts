@@ -14,7 +14,7 @@ BLUE='\033[0;34m'
 NC='\033[0m'
 
 # Репозиторий (замените на ваш)
-REPO_URL="https://raw.githubusercontent.com/m0nty81/vps-scripts/main"
+REPO_URL="https://raw.githubusercontent.com/m0nty81/vps-scripts/refs/heads/main"
 
 # Временная директория
 TEMP_DIR=$(mktemp -d)
